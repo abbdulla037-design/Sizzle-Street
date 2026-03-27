@@ -17,7 +17,6 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -28,54 +27,95 @@
     cursor: default;
   }
 
-  /* ---- NAV ---- */
+  /* ============ CUSTOM CURSOR ============ */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(255,69,0,0.5);
+    border-radius: 50%;
+    position: fixed; pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease, width 0.3s, height 0.3s;
+  }
+  body:has(a:hover) .cursor, body:has(button:hover) .cursor {
+    width: 20px; height: 20px;
+  }
+
+  /* ============ PARTICLES ============ */
+  #particles-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ============ NAV ============ */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 18px 6%;
-    background: rgba(14,14,14,0.92);
-    backdrop-filter: blur(10px);
+    background: rgba(14,14,14,0.85);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,69,0,0.15);
+    transition: background 0.3s, padding 0.3s;
   }
-  .nav-logo {
-    display: flex;
-    align-items: center;
+  nav.scrolled {
+    padding: 10px 6%;
+    background: rgba(14,14,14,0.97);
+    border-bottom-color: rgba(255,69,0,0.3);
   }
   .nav-logo img {
-    height: 80px;
-    width: auto;
-    border-radius: 6px;
+    height: 80px; width: auto; border-radius: 6px;
     filter: drop-shadow(0 0 8px rgba(255,69,0,0.35));
-    transition: filter 0.2s;
+    transition: filter 0.3s, transform 0.3s;
   }
   .nav-logo img:hover {
-    filter: drop-shadow(0 0 14px rgba(255,69,0,0.6));
+    filter: drop-shadow(0 0 20px rgba(255,69,0,0.7));
+    transform: scale(1.05);
   }
-  
-  /* HAMBURGER ICON - Hidden by default */
   .menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    cursor: pointer;
+    display: none; flex-direction: column; gap: 6px; cursor: pointer; z-index: 101;
   }
   .menu-toggle span {
-    width: 30px;
-    height: 3px;
+    width: 30px; height: 3px;
     background: var(--white);
-    transition: 0.3s;
+    transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+    display: block;
   }
+  .menu-toggle.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  .menu-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .menu-toggle.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
   .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
   .nav-links a {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 1rem; font-weight: 600;
     color: var(--white); text-decoration: none; letter-spacing: 1px;
-    text-transform: uppercase; transition: color 0.2s;
+    text-transform: uppercase;
+    position: relative; padding-bottom: 4px;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--orange);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.3s ease;
   }
   .nav-links a:hover { color: var(--orange); }
+  .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
 
-  /* ---- HERO ---- */
+  /* ============ HERO ============ */
   #hero {
     min-height: 100vh;
     display: flex; flex-direction: column;
@@ -89,14 +129,25 @@
       radial-gradient(ellipse at 80% 50%, rgba(255,69,0,0.18) 0%, transparent 60%),
       radial-gradient(ellipse at 20% 80%, rgba(255,215,0,0.07) 0%, transparent 50%),
       var(--black);
+    animation: bgPulse 6s ease-in-out infinite;
+  }
+  @keyframes bgPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
   }
   .hero-grid {
     position: absolute; inset: 0; z-index: 0;
     background-image:
-      linear-gradient(rgba(255,69,0,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,69,0,0.04) 1px, transparent 1px);
+      linear-gradient(rgba(255,69,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,69,0,0.05) 1px, transparent 1px);
     background-size: 60px 60px;
+    animation: gridSlide 20s linear infinite;
   }
+  @keyframes gridSlide {
+    from { background-position: 0 0; }
+    to { background-position: 60px 60px; }
+  }
+
   .hero-tag {
     position: relative; z-index: 1;
     font-family: 'Barlow Condensed', sans-serif;
@@ -106,7 +157,7 @@
     border: 1px solid rgba(255,215,0,0.3);
     padding: 6px 16px; border-radius: 2px;
     margin-bottom: 24px;
-    animation: fadeUp 0.8s ease both;
+    opacity: 0; animation: fadeUp 0.8s 0.2s ease forwards;
   }
   .hero-title {
     position: relative; z-index: 1;
@@ -115,9 +166,17 @@
     line-height: 0.9;
     color: var(--white);
     letter-spacing: 2px;
-    animation: fadeUp 0.9s 0.1s ease both;
+    opacity: 0; animation: fadeUp 0.9s 0.4s ease forwards;
   }
-  .hero-title .fire { color: var(--orange); }
+  .hero-title .fire {
+    color: var(--orange);
+    display: inline-block;
+    animation: textGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes textGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(255,69,0,0.3); }
+    50% { text-shadow: 0 0 60px rgba(255,69,0,0.7), 0 0 100px rgba(255,69,0,0.3); }
+  }
   .hero-sub {
     position: relative; z-index: 1;
     font-family: 'Barlow Condensed', sans-serif;
@@ -125,41 +184,83 @@
     font-weight: 600; letter-spacing: 6px;
     text-transform: uppercase; color: var(--gray);
     margin-top: 16px; margin-bottom: 40px;
-    animation: fadeUp 0.9s 0.2s ease both;
+    opacity: 0; animation: fadeUp 0.9s 0.6s ease forwards;
   }
   .hero-sub span { color: var(--gold); }
   .hero-cta {
     position: relative; z-index: 1;
     display: flex; gap: 16px; flex-wrap: wrap;
-    animation: fadeUp 0.9s 0.3s ease both;
+    opacity: 0; animation: fadeUp 0.9s 0.8s ease forwards;
   }
+
+  /* scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: fadeIn 1s 1.5s ease both;
+  }
+  .scroll-hint span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gray);
+  }
+  .scroll-dot {
+    width: 2px; height: 48px;
+    background: linear-gradient(to bottom, var(--orange), transparent);
+    border-radius: 2px;
+    animation: scrollLine 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0.3; }
+  }
+
+  /* ============ BUTTONS ============ */
   .btn {
     display: inline-block; padding: 14px 36px;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 1rem; font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase; text-decoration: none;
-    border: none; cursor: pointer; transition: all 0.2s;
-    border-radius: 2px;
+    border: none; cursor: pointer;
+    border-radius: 2px; position: relative; overflow: hidden;
   }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.4s ease;
+  }
+  .btn:hover::before { transform: translateX(110%) skewX(-15deg); }
   .btn-primary {
     background: var(--orange); color: var(--black);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .btn-primary:hover { background: #ff6230; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,69,0,0.4); }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,69,0,0.5); }
   .btn-outline {
     background: transparent; color: var(--white);
     border: 1.5px solid rgba(255,255,255,0.3);
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
   }
-  .btn-outline:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-3px); }
 
+  /* ============ HERO FLAME ============ */
   .hero-flame {
     position: absolute; right: 6%; bottom: 0; z-index: 1;
     font-size: clamp(8rem, 20vw, 22rem);
     line-height: 1; opacity: 0.12;
-    animation: flicker 3s ease-in-out infinite;
+    animation: flameFloat 4s ease-in-out infinite;
     user-select: none; pointer-events: none;
+    filter: drop-shadow(0 0 40px rgba(255,69,0,0.3));
+  }
+  @keyframes flameFloat {
+    0%, 100% { opacity: 0.1; transform: scale(1) rotate(-3deg) translateY(0); }
+    33% { opacity: 0.16; transform: scale(1.04) rotate(2deg) translateY(-20px); }
+    66% { opacity: 0.13; transform: scale(0.97) rotate(-1deg) translateY(-10px); }
   }
 
-  /* ---- SECTION BASE ---- */
+  /* ============ SECTION BASE ============ */
   section { padding: 100px 8%; }
   .section-label {
     font-family: 'Barlow Condensed', sans-serif;
@@ -174,14 +275,44 @@
     margin-bottom: 48px;
   }
 
-  /* ---- DIVIDER ---- */
+  /* scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0; transform: translateX(-50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right {
+    opacity: 0; transform: translateX(50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* ============ DIVIDER ============ */
   .divider {
     width: 100%; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,69,0,0.4), transparent);
-    margin: 0;
+    position: relative; overflow: hidden;
+  }
+  .divider::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    animation: dividerScan 4s linear infinite;
+  }
+  @keyframes dividerScan {
+    from { left: -100%; }
+    to { left: 100%; }
   }
 
-  /* ---- MENU ---- */
+  /* ============ MENU ============ */
   #menu { background: var(--dark); }
   .menu-cats {
     display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px;
@@ -193,11 +324,14 @@
     text-transform: uppercase; border-radius: 2px;
     border: 1.5px solid rgba(255,255,255,0.15);
     background: transparent; color: var(--gray);
-    cursor: pointer; transition: all 0.2s;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s, box-shadow 0.2s;
   }
   .menu-cat-btn.active, .menu-cat-btn:hover {
     background: var(--orange); color: var(--black);
     border-color: var(--orange);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,69,0,0.35);
   }
   .menu-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -207,18 +341,35 @@
     background: var(--card);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 4px; padding: 28px;
-    transition: all 0.25s;
     position: relative; overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+    animation: cardIn 0.4s ease both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: scale(0.93) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
   }
   .menu-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 2px;
     background: var(--orange); transform: scaleX(0);
-    transform-origin: left; transition: transform 0.3s;
+    transform-origin: left; transition: transform 0.35s ease;
   }
-  .menu-card:hover { transform: translateY(-4px); border-color: rgba(255,69,0,0.2); }
+  .menu-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 120%, rgba(255,69,0,0.08) 0%, transparent 70%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .menu-card:hover { transform: translateY(-6px); border-color: rgba(255,69,0,0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
   .menu-card:hover::before { transform: scaleX(1); }
-  .menu-card-icon { font-size: 2.4rem; margin-bottom: 12px; }
+  .menu-card:hover::after { opacity: 1; }
+  .menu-card-icon {
+    font-size: 2.4rem; margin-bottom: 12px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  .menu-card:hover .menu-card-icon { transform: scale(1.2) rotate(-5deg); }
   .menu-card-name {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.3rem; font-weight: 700; letter-spacing: 1px;
@@ -228,25 +379,35 @@
   .menu-card-price {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.6rem; color: var(--gold); letter-spacing: 1px;
+    transition: color 0.2s;
   }
+  .menu-card:hover .menu-card-price { color: var(--orange); }
   .menu-card-badge {
     display: inline-block; padding: 3px 10px;
     background: rgba(255,69,0,0.15); color: var(--orange);
     font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase; border-radius: 2px; margin-left: 10px;
     font-family: 'Barlow Condensed', sans-serif;
+    animation: badgePulse 2.5s ease-in-out infinite;
+  }
+  @keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,69,0,0); }
+    50% { box-shadow: 0 0 8px 2px rgba(255,69,0,0.25); }
   }
 
-  /* ---- ABOUT ---- */
+  /* ============ ABOUT ============ */
   #about {
     display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
     align-items: center;
   }
   .about-logo-img {
-    width: 100%;
-    max-width: 420px;
-    border-radius: 6px;
+    width: 100%; max-width: 420px; border-radius: 6px;
     filter: drop-shadow(0 4px 24px rgba(255,69,0,0.25));
+    transition: filter 0.4s, transform 0.4s;
+  }
+  .about-logo-img:hover {
+    filter: drop-shadow(0 8px 40px rgba(255,69,0,0.5));
+    transform: scale(1.02);
   }
   .about-stats {
     display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
@@ -254,19 +415,29 @@
   .stat-card {
     background: var(--card); border: 1px solid rgba(255,255,255,0.06);
     border-radius: 4px; padding: 20px; text-align: center;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
   }
+  .stat-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--gold); transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .stat-card:hover { border-color: rgba(255,215,0,0.25); transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
+  .stat-card:hover::before { transform: scaleX(1); }
   .stat-num {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.4rem; color: var(--orange); letter-spacing: 1px;
+    transition: color 0.3s;
   }
+  .stat-card:hover .stat-num { color: var(--gold); }
   .stat-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; }
   .about-text p {
     font-size: 1.05rem; color: var(--gray); line-height: 1.8; margin-bottom: 20px;
   }
   .about-text strong { color: var(--white); }
-  .vibes {
-    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px;
-  }
+  .vibes { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
   .vibe-tag {
     padding: 8px 18px;
     font-family: 'Barlow Condensed', sans-serif;
@@ -274,9 +445,15 @@
     text-transform: uppercase; border-radius: 2px;
     background: rgba(255,215,0,0.08); color: var(--gold);
     border: 1px solid rgba(255,215,0,0.2);
+    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  }
+  .vibe-tag:hover {
+    background: rgba(255,215,0,0.18);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255,215,0,0.2);
   }
 
-  /* ---- CONTACT ---- */
+  /* ============ CONTACT ============ */
   #contact { background: var(--dark); }
   .contact-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;
@@ -284,22 +461,33 @@
   .contact-card {
     background: var(--card); border: 1px solid rgba(255,255,255,0.06);
     border-radius: 4px; padding: 32px;
-    transition: all 0.25s;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
   }
-  .contact-card:hover { border-color: rgba(255,69,0,0.3); transform: translateY(-3px); }
-  .contact-card-icon { font-size: 2rem; margin-bottom: 14px; }
+  .contact-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,69,0,0.05) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .contact-card:hover { border-color: rgba(255,69,0,0.35); transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,0.3); }
+  .contact-card:hover::after { opacity: 1; }
+  .contact-card-icon {
+    font-size: 2rem; margin-bottom: 14px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  .contact-card:hover .contact-card-icon { transform: scale(1.15) rotate(-8deg); }
   .contact-card-label {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.8rem; font-weight: 700; letter-spacing: 3px;
     text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
   }
-  .contact-card-value {
-    font-size: 1rem; color: var(--white); line-height: 1.6;
-  }
-  .contact-card-value a { color: var(--white); text-decoration: none; }
+  .contact-card-value { font-size: 1rem; color: var(--white); line-height: 1.6; }
+  .contact-card-value a { color: var(--white); text-decoration: none; transition: color 0.2s; }
   .contact-card-value a:hover { color: var(--orange); }
 
-  /* ---- SOCIAL ---- */
+  /* ============ SOCIAL ============ */
   #social { text-align: center; padding: 80px 8%; }
   .social-links {
     display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
@@ -311,22 +499,42 @@
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 1rem; font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase; text-decoration: none;
-    border-radius: 2px; transition: all 0.2s;
+    border-radius: 2px;
     border: 1.5px solid rgba(255,255,255,0.12);
     color: var(--white); background: var(--card);
+    transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s, box-shadow 0.25s;
+    position: relative; overflow: hidden;
   }
-  .social-btn:hover { background: var(--orange); border-color: var(--orange); color: var(--black); transform: translateY(-3px); }
-  .social-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .social-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--orange);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 0.3s ease;
+    z-index: 0;
+  }
+  .social-btn:hover::before { transform: scaleY(1); }
+  .social-btn:hover { color: var(--black); border-color: var(--orange); transform: translateY(-4px); box-shadow: 0 12px 28px rgba(255,69,0,0.4); }
+  .social-btn svg, .social-btn span { position: relative; z-index: 1; }
+  .social-btn svg { width: 20px; height: 20px; fill: currentColor; transition: transform 0.3s; }
+  .social-btn:hover svg { transform: rotate(10deg) scale(1.1); }
 
-  /* ---- FOOTER ---- */
+  /* ============ FOOTER ============ */
   footer {
-    background: #080808;
-    text-align: center; padding: 40px 8%;
+    background: #080808; text-align: center; padding: 40px 8%;
     border-top: 1px solid rgba(255,69,0,0.12);
+    position: relative; overflow: hidden;
+  }
+  footer::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    animation: dividerScan 5s linear infinite;
   }
   .footer-logo {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.4rem; color: var(--orange); letter-spacing: 3px;
+    animation: textGlow 3s ease-in-out infinite;
   }
   .footer-tagline {
     font-family: 'Barlow Condensed', sans-serif;
@@ -335,60 +543,84 @@
   }
   .footer-copy { font-size: 0.8rem; color: #555; margin-top: 24px; }
 
-  /* ---- ANIMATIONS ---- */
+  /* ============ KEYFRAMES ============ */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes flicker {
-    0%, 100% { opacity: 0.12; transform: scale(1) rotate(-2deg); }
-    50% { opacity: 0.18; transform: scale(1.03) rotate(2deg); }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  /* ---- RESPONSIVE ---- */
+  /* ============ RIPPLE ============ */
+  .ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transform: scale(0);
+    animation: rippleAnim 0.6s linear;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: var(--card); border: 1px solid rgba(255,69,0,0.4);
+    padding: 14px 24px; border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem; font-weight: 600; letter-spacing: 1px;
+    color: var(--white);
+    transform: translateY(80px); opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ============ RESPONSIVE ============ */
   @media (max-width: 768px) {
     nav { padding: 12px 6%; }
-    
-    .menu-toggle { display: flex; z-index: 101; }
-    
+    .menu-toggle { display: flex; }
     .nav-links {
-      position: fixed;
-      top: 0; right: -100%;
-      height: 100vh; width: 70%;
-      background: var(--black);
-      flex-direction: column;
-      justify-content: center;
-      transition: 0.4s ease;
+      position: fixed; top: 0; right: -100%; height: 100vh; width: 70%;
+      background: var(--black); flex-direction: column;
+      justify-content: center; transition: 0.4s cubic-bezier(0.4,0,0.2,1);
       box-shadow: -10px 0 30px rgba(0,0,0,0.5);
     }
-    
-    /* When menu is active */
     .nav-links.active { right: 0; }
-    
     #hero { padding: 100px 6% 60px; }
     section { padding: 70px 6%; }
     #about { grid-template-columns: 1fr; gap: 40px; }
     .hero-flame { font-size: 8rem; opacity: 0.08; }
     .nav-logo img { height: 50px; }
+    .cursor, .cursor-ring { display: none; }
   }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo"><img src="logo1.png" alt="Sizzle Street Logo"></div>
-  
-  <div class="menu-toggle" id="mobile-menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
+<!-- Particle Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Toast -->
+<div class="toast" id="toast">🔥 Copied to clipboard!</div>
+
+<nav id="navbar">
+  <div class="nav-logo"><img src="logo1.png" alt="Sizzle Street Logo"></div>
+  <div class="menu-toggle" id="mobile-menu">
+    <span></span><span></span><span></span>
+  </div>
   <ul class="nav-links" id="nav-list">
-    <li><a href="#menu" onclick="toggleMenu()">Menu</a></li>
-    <li><a href="#about" onclick="toggleMenu()">About</a></li>
-    <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
-    <li><a href="#social" class="btn btn-primary" style="padding:8px 22px;font-size:0.85rem;" onclick="toggleMenu()">Follow Us</a></li>
+    <li><a href="#menu" onclick="closeMobileMenu()">Menu</a></li>
+    <li><a href="#about" onclick="closeMobileMenu()">About</a></li>
+    <li><a href="#contact" onclick="closeMobileMenu()">Contact</a></li>
+    <li><a href="#social" class="btn btn-primary" style="padding:8px 22px;font-size:0.85rem;" onclick="closeMobileMenu()">Follow Us</a></li>
   </ul>
 </nav>
 
@@ -396,35 +628,37 @@
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-tag">📍 Sadar, Rawalpindi</div>
-  <h1 class="hero-title">SIZZLES<br><span class="fire">STREET</span></h1>
+  <h1 class="hero-title">SIZZLE<br><span class="fire">STREET</span></h1>
   <p class="hero-sub">Sizzles <span>Every</span> Bite.</p>
   <div class="hero-cta">
     <a href="#menu" class="btn btn-primary">View Menu</a>
     <a href="#contact" class="btn btn-outline">Find Us</a>
   </div>
   <div class="hero-flame">🔥</div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-dot"></div>
+  </div>
 </section>
 
 <div class="divider"></div>
 
 <section id="menu">
-  <div class="section-label">What We Serve</div>
-  <h2 class="section-title">THE MENU</h2>
-
-  <div class="menu-cats">
-    <button class="menu-cat-btn active" onclick="filterMenu('all')">All Items</button>
-    <button class="menu-cat-btn" onclick="filterMenu('bbq')">🔥 BBQ Grills</button>
-    <button class="menu-cat-btn" onclick="filterMenu('fries')">🍟 Fries</button>
-    <button class="menu-cat-btn" onclick="filterMenu('drinks')">🥤 Beverages</button>
+  <div class="section-label reveal">What We Serve</div>
+  <h2 class="section-title reveal">THE MENU</h2>
+  <div class="menu-cats reveal">
+    <button class="menu-cat-btn active" onclick="filterMenu('all', event)">All Items</button>
+    <button class="menu-cat-btn" onclick="filterMenu('bbq', event)">🔥 BBQ Grills</button>
+    <button class="menu-cat-btn" onclick="filterMenu('fries', event)">🍟 Fries</button>
+    <button class="menu-cat-btn" onclick="filterMenu('drinks', event)">🥤 Beverages</button>
   </div>
-
   <div class="menu-grid" id="menuGrid"></div>
 </section>
 
 <div class="divider"></div>
 
 <section id="about">
-  <div class="about-visual">
+  <div class="about-visual reveal-left">
     <div class="about-box" style="padding:24px;background:var(--card);border:1px solid rgba(255,69,0,0.15);border-radius:4px;text-align:center;">
       <img src="logo1.png" alt="Sizzle Street" class="about-logo-img">
     </div>
@@ -435,7 +669,7 @@
       <div class="stat-card"><div class="stat-num">🌶️</div><div class="stat-label">Pindi Flavor</div></div>
     </div>
   </div>
-  <div class="about-text">
+  <div class="about-text reveal-right">
     <div class="section-label">Our Story</div>
     <h2 class="section-title" style="margin-bottom:24px;">BORN IN<br>THE STREETS</h2>
     <p>Sizzle Street was built on one simple idea — <strong>Rawalpindi deserves real street food</strong>. The kind that sizzles loud, smells incredible, and tastes even better.</p>
@@ -452,28 +686,28 @@
 <div class="divider"></div>
 
 <section id="contact">
-  <div class="section-label">Get In Touch</div>
-  <h2 class="section-title">FIND US</h2>
+  <div class="section-label reveal">Get In Touch</div>
+  <h2 class="section-title reveal">FIND US</h2>
   <div class="contact-grid">
-    <div class="contact-card">
+    <div class="contact-card reveal">
       <div class="contact-card-icon">📍</div>
       <div class="contact-card-label">Location</div>
       <div class="contact-card-value">Sadar, Rawalpindi<br>Near Committee Chowk</div>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal" style="transition-delay:0.1s">
       <div class="contact-card-icon">🕐</div>
       <div class="contact-card-label">Hours</div>
       <div class="contact-card-value">Every Day<br>6:00 PM – 12:00 AM</div>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal" style="transition-delay:0.2s">
       <div class="contact-card-icon">📞</div>
       <div class="contact-card-label">WhatsApp Orders</div>
       <div class="contact-card-value"><a href="https://wa.me/923020536008">+92 3020536008</a></div>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal" style="transition-delay:0.3s">
       <div class="contact-card-icon">📧</div>
       <div class="contact-card-label">Email</div>
-      <div class="contact-card-value"><a href="mailto:hello@sizzlestreet.pk">hello@sizzlestreet.pk</a></div>
+      <div class="contact-card-value"><a href="mailto:sizzlestreet@gmail.com">sizzlestreet@gmail.com</a></div>
     </div>
   </div>
 </section>
@@ -481,30 +715,32 @@
 <div class="divider"></div>
 
 <section id="social">
-  <div class="section-label">Stay Connected</div>
-  <h2 class="section-title" style="margin-bottom:16px;">FOLLOW THE<br>SIZZLE</h2>
-  <p style="color:var(--gray);max-width:500px;margin:0 auto 0;line-height:1.7;">
+  <div class="section-label reveal">Stay Connected</div>
+  <h2 class="section-title reveal" style="margin-bottom:16px;">FOLLOW THE<br>SIZZLE</h2>
+  <p class="reveal" style="color:var(--gray);max-width:500px;margin:0 auto;line-height:1.7;">
     Watch our reels, see daily specials, and be the first to know about new items and deals.
   </p>
-  <div class="social-links">
-    <a href="https://www.instagram.com/itx_abdullah0536?igsh=ajhhdGgzN21kd3Nq" target="_blank" class="social-btn">
+  <div class="social-links reveal">
+    <a href="https://www.instagram.com/itx_abdullah0536" target="_blank" class="social-btn">
       <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      Instagram
+      <span>Instagram</span>
     </a>
     <a href="https://www.facebook.com/share/16zLMkzgDG/" target="_blank" class="social-btn">
       <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      Facebook
+      <span>Facebook</span>
     </a>
-    <a href="https://www.tiktok.com/@abdullah302.gg?_r=1&_d=eka7gkdd95jmfh&sec_uid=MS4wLjABAAAA-8EU67yCXhnBTivUvL8vJlccXFNgzJTJRblFoGTYb4id0lolq26TM3vN1OUOpRFH&share_author_id=7060852745662219291&sharer_language=en&source=h5_m&u_code=e04cje0l3aj4d6&timestamp=1774546137&user_id=7060852745662219291&sec_user_id=MS4wLjABAAAA-8EU67yCXhnBTivUvL8vJlccXFNgzJTJRblFoGTYb4id0lolq26TM3vN1OUOpRFH&item_author_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&share_iid=7585309193067955976&share_link_id=cebe7a31-505b-46dc-9276-4ad85682e829&share_app_id=1233&ugbiz_name=ACCOUNT&ug_btm=b8727%2Cb7360&social_share_type=5&enable_checksum=1" target="_blank" class="social-btn">
+    <a href="https://www.tiktok.com/@abdullah302.gg" target="_blank" class="social-btn">
       <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-      TikTok
+      <span>TikTok</span>
     </a>
     <a href="https://wa.me/923020536008" target="_blank" class="social-btn">
       <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      WhatsApp
+      <span>WhatsApp</span>
     </a>
   </div>
 </section>
+
+<div class="divider"></div>
 
 <footer>
   <div class="footer-logo">SIZZLE STREET 🔥</div>
@@ -513,34 +749,125 @@
 </footer>
 
 <script>
-// --- MENU DATA & FILTERING (UNCHANGED) ---
+// ===================== CURSOR =====================
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+function animateCursorRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  cursorRing.style.left = ringX + 'px';
+  cursorRing.style.top = ringY + 'px';
+  requestAnimationFrame(animateCursorRing);
+}
+animateCursorRing();
+
+// ===================== PARTICLES =====================
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = -Math.random() * 0.6 - 0.2;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.color = Math.random() > 0.6 ? '#FF4500' : '#FFD700';
+    this.life = 1;
+    this.decay = Math.random() * 0.003 + 0.001;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life -= this.decay;
+    if (this.life <= 0 || this.y < -10) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.opacity * this.life;
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ===================== NAV SCROLL =====================
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ===================== MOBILE MENU =====================
+const menuToggle = document.getElementById('mobile-menu');
+const navList = document.getElementById('nav-list');
+menuToggle.addEventListener('click', () => {
+  menuToggle.classList.toggle('open');
+  navList.classList.toggle('active');
+});
+function closeMobileMenu() {
+  menuToggle.classList.remove('open');
+  navList.classList.remove('active');
+}
+
+// ===================== MENU DATA =====================
 const menuItems = [
-  { cat: 'bbq', icon: '🥩', name: 'Seekh Kabab', desc: 'Juicy minced beef kababs grilled over coal, served with chutney.', price: '250 PKR', badge: 'Bestseller' },
-  { cat: 'bbq', icon: '🍗', name: 'Malai Boti', desc: 'Creamy marinated chicken tikka, tender and melt-in-mouth.', price: '320 PKR', badge: '' },
-  { cat: 'bbq', icon: '🫓', name: 'Shami Kabab', desc: 'Classic Pindi-style shami kababs, crispy outside soft inside.', price: '200 PKR', badge: '' },
-  { cat: 'bbq', icon: '🔥', name: 'Chapli Kabab', desc: 'Peshawari-style flat kabab with spices, tomato and eggs.', price: '280 PKR', badge: 'Spicy' },
-  { cat: 'fries', icon: '🍟', name: 'Classic Fries', desc: 'Golden crispy fries, perfectly salted. Simple and satisfying.', price: '150 PKR', badge: '' },
-  { cat: 'fries', icon: '🌶️', name: 'Masala Fries', desc: 'Chatpata fries tossed in chaat masala, lemon and green chutney.', price: '200 PKR', badge: 'Fan Fav' },
-  { cat: 'fries', icon: '🧀', name: 'Loaded Fries', desc: 'Fries loaded with cheese sauce, mayo, jalapeños & BBQ meat.', price: '400 PKR', badge: 'Must Try' },
-  { cat: 'drinks', icon: '🥤', name: 'Sugarcane Juice', desc: 'Fresh pressed ganna juice, ice cold and naturally sweet.', price: '120 PKR', badge: '' },
-  { cat: 'drinks', icon: '🍋', name: 'Mint Lemonade', desc: 'Fresh lemon, mint, and soda — the ultimate refresher.', price: '150 PKR', badge: 'Refreshing' },
-  { cat: 'drinks', icon: '🍵', name: 'Kashmiri Chai', desc: 'Pink creamy chai with cardamom and crushed nuts.', price: '180 PKR', badge: 'Winter Special' },
+  { cat:'bbq', icon:'🥩', name:'Seekh Kabab', desc:'Juicy minced beef kababs grilled over coal, served with chutney.', price:'250 PKR', badge:'Bestseller' },
+  { cat:'bbq', icon:'🍗', name:'Malai Boti', desc:'Creamy marinated chicken tikka, tender and melt-in-mouth.', price:'320 PKR', badge:'' },
+  { cat:'bbq', icon:'🫓', name:'Shami Kabab', desc:'Classic Pindi-style shami kababs, crispy outside soft inside.', price:'200 PKR', badge:'' },
+  { cat:'bbq', icon:'🔥', name:'Chapli Kabab', desc:'Peshawari-style flat kabab with spices, tomato and eggs.', price:'280 PKR', badge:'Spicy' },
+  { cat:'fries', icon:'🍟', name:'Classic Fries', desc:'Golden crispy fries, perfectly salted. Simple and satisfying.', price:'150 PKR', badge:'' },
+  { cat:'fries', icon:'🌶️', name:'Masala Fries', desc:'Chatpata fries tossed in chaat masala, lemon and green chutney.', price:'200 PKR', badge:'Fan Fav' },
+  { cat:'fries', icon:'🧀', name:'Loaded Fries', desc:'Fries loaded with cheese sauce, mayo, jalapeños & BBQ meat.', price:'400 PKR', badge:'Must Try' },
+  { cat:'drinks', icon:'🥤', name:'Sugarcane Juice', desc:'Fresh pressed ganna juice, ice cold and naturally sweet.', price:'120 PKR', badge:'' },
+  { cat:'drinks', icon:'🍋', name:'Mint Lemonade', desc:'Fresh lemon, mint, and soda — the ultimate refresher.', price:'150 PKR', badge:'Refreshing' },
+  { cat:'drinks', icon:'🍵', name:'Kashmiri Chai', desc:'Pink creamy chai with cardamom and crushed nuts.', price:'180 PKR', badge:'Winter Special' },
 ];
 
 let currentCat = 'all';
 
-function filterMenu(cat) {
+function filterMenu(cat, e) {
   currentCat = cat;
   document.querySelectorAll('.menu-cat-btn').forEach(b => b.classList.remove('active'));
-  if(event) event.target.classList.add('active');
+  if (e) e.target.classList.add('active');
+  // ripple on button
+  if (e) addRipple(e.target, e);
   renderMenu();
 }
 
 function renderMenu() {
   const grid = document.getElementById('menuGrid');
   const items = currentCat === 'all' ? menuItems : menuItems.filter(i => i.cat === currentCat);
-  grid.innerHTML = items.map(item => `
-    <div class="menu-card">
+  grid.innerHTML = items.map((item, idx) => `
+    <div class="menu-card" style="animation-delay:${idx * 0.06}s">
       <div class="menu-card-icon">${item.icon}</div>
       <div class="menu-card-name">${item.name}${item.badge ? `<span class="menu-card-badge">${item.badge}</span>` : ''}</div>
       <div class="menu-card-desc">${item.desc}</div>
@@ -548,21 +875,50 @@ function renderMenu() {
     </div>
   `).join('');
 }
-
 renderMenu();
 
-// --- NEW NAVIGATION LOGIC ---
-const menuToggle = document.getElementById('mobile-menu');
-const navLinks = document.getElementById('nav-list');
+// ===================== RIPPLE =====================
+function addRipple(el, e) {
+  const rect = el.getBoundingClientRect();
+  const r = document.createElement('span');
+  r.classList.add('ripple');
+  const size = Math.max(rect.width, rect.height);
+  r.style.width = r.style.height = size + 'px';
+  r.style.left = (e.clientX - rect.left - size / 2) + 'px';
+  r.style.top = (e.clientY - rect.top - size / 2) + 'px';
+  el.style.position = 'relative';
+  el.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+}
+document.querySelectorAll('.btn, .menu-cat-btn').forEach(btn => {
+  btn.addEventListener('click', e => addRipple(btn, e));
+});
 
-function toggleMenu() {
-  if (window.innerWidth <= 768) {
-    navLinks.classList.toggle('active');
-  }
+// ===================== SCROLL REVEAL =====================
+const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => observer.observe(el));
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-menuToggle.addEventListener('click', toggleMenu);
-
+// Copy phone number on click
+document.querySelectorAll('.contact-card-value a[href^="https://wa.me"]').forEach(a => {
+  a.addEventListener('click', e => {
+    navigator.clipboard?.writeText('+92 3020536008').then(() => showToast('📞 Number copied!'));
+  });
+});
 </script>
 </body>
 </html>
