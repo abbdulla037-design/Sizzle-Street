@@ -1040,11 +1040,18 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===================== LOADER =====================
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
-  }, 1500);
-});
+function hideLoader() {
+  document.getElementById('loader').classList.add('hidden');
+}
+// Hide after max 2s no matter what
+setTimeout(hideLoader, 2000);
+// Or as soon as DOM is ready
+if (document.readyState === 'complete') {
+  setTimeout(hideLoader, 800);
+} else {
+  window.addEventListener('load', () => setTimeout(hideLoader, 800));
+  document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 1200));
+}
 
 // ===================== SCROLL PROGRESS =====================
 const scrollBar = document.getElementById('scroll-progress');
