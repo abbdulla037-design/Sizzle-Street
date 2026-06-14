@@ -77,6 +77,8 @@ Institute of Space Technology (IST), Islamabad
 Repository Link:
 
 https://github.com/abbdulla037-design/Sizzle-Street
+## Live page Link
+https://abbdulla037-design.github.io/Sizzle-Street/
 
 ## 📄 License
 
